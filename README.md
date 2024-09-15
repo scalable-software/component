@@ -1,0 +1,2 @@
+# component
+Base Web Component

@@ -1,0 +1,20 @@
+html {
+  height: 100%;
+  background-color: #ffffff; /* Light mode background color */
+  color: #000000; /* Light mode text color */
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #1e1e1e; /* Dark mode background color */
+    color: #f0f0f0; /* Dark mode text color */
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background-color: inherit; /* Inherit from html */
+  color: inherit; /* Inherit text color */
+}

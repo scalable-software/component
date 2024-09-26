@@ -1,6 +1,6 @@
 import * as help from "./helper.js";
 
-import { Component } from "../../src/Component.js";
+import { Component, Template } from "../../src/Index.js";
 
 /**
  * Test Component
@@ -32,6 +32,13 @@ class Test extends Component {
   public static get Tag() {
     return "test-component";
   }
+
+  /**
+   * `Template.load(filename)` is used to load an HTML template packaged with the component.
+   * @category Template
+   * @hidden
+   */
+  public static Template = new Template(import.meta.url);
 
   /**
    * Component Attributes
@@ -125,11 +132,8 @@ describe("Given Component is defined", () => {
       it("then component.root is undefined", () => {
         expect(component.root).toBeUndefined();
       });
-      it("then component.template is undefined", () => {
-        expect(component.template).toBeUndefined();
-      });
-      it("then component.css is undefined", () => {
-        expect(component.css).toBeUndefined();
+      it("then component.configuration is undefined", () => {
+        expect(component.configuration).toBeUndefined();
       });
     });
   });

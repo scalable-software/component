@@ -2,7 +2,20 @@
  * @module Core
  */
 
-import { Template } from "./Template.js";
+export type Configuration = {
+  url: string;
+  template?: {
+    id: string;
+  };
+  css?: {
+    name: string;
+  };
+};
+
+const Event = {
+  CONNECTED: "connected",
+  DISCONNECTED: "disconnected",
+};
 
 /**
  * Component class for creating custom elements.
@@ -16,7 +29,7 @@ export class Component extends HTMLElement {
    * @category Template
    * @hidden
    */
-  public static Template = Template;
+  public static Template = null;
 
   /**
    * When extending `Component`, override attributes.
@@ -40,6 +53,13 @@ export class Component extends HTMLElement {
   }
 
   /**
+   * The configuration object for the component.
+   * @category Configuration
+   * @hidden
+   */
+  private _configuration: Configuration;
+
+  /**
    * The shadow root of the component if it exists.
    * @hidden
    */
@@ -48,9 +68,19 @@ export class Component extends HTMLElement {
   /**
    * @hidden
    */
-  constructor() {
+  constructor(configuration?: Configuration) {
     super();
-    this.template && this._addTemplate();
+    configuration && (this._configuration = configuration);
+    this.configuration?.template?.id && this._addTemplate();
+  }
+
+  /**
+   * The configuration object of the component exposed as a readonly accessor.
+   * @category Configuration
+   * @hidden
+   */
+  public get configuration() {
+    return this._configuration;
   }
 
   /**
@@ -63,24 +93,6 @@ export class Component extends HTMLElement {
   }
 
   /**
-   * Optional readonly accessor with HTML Template id to use if template is required
-   * @category Configuration
-   */
-  /* istanbul ignore next */
-  public get template() {
-    return undefined;
-  }
-
-  /**
-   * Optional readonly access with CSS style to use if style is required
-   * @category Configuration
-   */
-  /* istanbul ignore next */
-  public get css() {
-    return undefined;
-  }
-
-  /**
    * The connected callback is called when the element is added to the DOM.
    * It is used for initial setup tasks like loading templates, caching elements, and adding event listeners.
    * @category Hooks
@@ -90,7 +102,7 @@ export class Component extends HTMLElement {
     this._initialize();
     this._cacheElements();
     this._addEventListeners();
-    this._dispatchEvent("connected");
+    this._dispatchEvent(Event.CONNECTED);
   }
 
   /**
@@ -101,7 +113,7 @@ export class Component extends HTMLElement {
    */
   disconnectedCallback() {
     this._removeEventListeners();
-    this._dispatchEvent("disconnected");
+    this._dispatchEvent(Event.DISCONNECTED);
   }
 
   /**
@@ -178,7 +190,8 @@ export class Component extends HTMLElement {
    * @hidden
    */
   private _loadTemplate = () =>
-    this.template && this._root.appendChild(this._cloneTemplate());
+    this.configuration?.template?.id &&
+    this._root.appendChild(this._cloneTemplate());
 
   /**
    * Not required by all components.
@@ -195,7 +208,9 @@ export class Component extends HTMLElement {
    * @returns {HTMLTemplateElement} - The template element from the DOM.
    **/
   private _getTemplate = () =>
-    document.getElementById(this.template) as HTMLTemplateElement;
+    document.getElementById(
+      this.configuration?.template?.id
+    ) as HTMLTemplateElement;
 
   /**
    * Not required by all components.
@@ -204,7 +219,8 @@ export class Component extends HTMLElement {
    **/
   /* istanbul ignore next */
   private _loadStyle = () =>
-    this.css && this._root.appendChild(this._createStylesheet());
+    this.configuration?.css?.name &&
+    this._root.appendChild(this._createStylesheet());
 
   /**
    * Not required by all components.
@@ -227,7 +243,10 @@ export class Component extends HTMLElement {
   private _createStylesheet = () => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = new URL(this.css, import.meta.url).href;
+    link.href = new URL(
+      this.configuration?.css?.name,
+      this.configuration.url
+    ).href;
     return link;
   };
 }

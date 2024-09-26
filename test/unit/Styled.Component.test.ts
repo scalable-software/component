@@ -1,18 +1,31 @@
 import * as help from "./helper.js";
 
-import { Component } from "../../src/Component.js";
+import { Component, Configuration, Template } from "../../src/Index.js";
+
+const configuration: Configuration = {
+  url: import.meta.url,
+  template: {
+    id: "template",
+  },
+  css: {
+    name: "./style/Test.style.css",
+  },
+};
 
 class TestStyled extends Component {
   public static get Tag() {
     return "test-style";
   }
 
-  public get template() {
-    return "template";
-  }
+  /**
+   * `Template.load(filename)` is used to load an HTML template packaged with the component.
+   * @category Template
+   * @hidden
+   */
+  public static Template = new Template(import.meta.url);
 
-  public get css() {
-    return "../test/unit/style/Test.style.css";
+  constructor() {
+    super(configuration);
   }
 }
 
@@ -25,9 +38,7 @@ describe("Given Component is defined in component registry", () => {
   });
   describe("and an HTML Template added to DOM", () => {
     beforeEach(async () => {
-      await TestStyled.Template.load(
-        "../test/unit/templates/Test.template.html"
-      );
+      await TestStyled.Template.load("./templates/Test.template.html");
     });
     afterEach(() => {
       help.remove("template");
@@ -43,9 +54,10 @@ describe("Given Component is defined in component registry", () => {
     help.define(TestStyled.Tag, TestStyled);
   });
   describe("an HTML Template added to DOM", () => {
+    let template;
     beforeEach(async () => {
-      await TestStyled.Template.load(
-        "../test/unit/templates/Test.template.html"
+      template = await TestStyled.Template.load(
+        "./templates/Test.template.html"
       );
     });
     afterEach(() => {
@@ -63,17 +75,37 @@ describe("Given Component is defined in component registry", () => {
       afterEach(() => {
         component.remove();
       });
+      it("then component.configuration is defined", () => {
+        expect(component.configuration).toBeDefined();
+        const test = new URL(
+          component.configuration?.css?.name,
+          component.configuration.url
+        ).href;
+      });
+      describe("and component.configuration is defined", () => {
+        it("then component.configuration.template is defined", () => {
+          expect(component.configuration.template).toBeDefined();
+        });
+        it("then component.configuration.template.id is defined", () => {
+          expect(component.configuration.template.id).toBeDefined();
+        });
+        it("then component.configuration.css is defined", () => {
+          expect(component.configuration.css).toBeDefined();
+        });
+        it("then component.configuration.css.name is defined", () => {
+          expect(component.configuration.css.name).toBeDefined();
+        });
+      });
       it("then component.root is defined", () => {
         expect(component.root).toBeDefined();
       });
-      it("then component.template is defined", () => {
-        expect(component.template).toBeDefined();
-      });
-      it("then component.css is defined", () => {
-        expect(component.css).toBeDefined();
-      });
-      it("then component.root contain stylesheet", () => {
-        expect(component.root.innerHTML).toContain("stylesheet");
+      describe("and component.root is defined", () => {
+        it("then component.root is a clone of the template in DOM", () => {
+          expect(component.root.innerHTML).toContain(template.innerHTML);
+        });
+        it("then component.root contain stylesheet", () => {
+          expect(component.root.innerHTML).toContain("stylesheet");
+        });
       });
     });
   });

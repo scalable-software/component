@@ -1,7 +1,10 @@
 /**
  * @module Core
  */
-import { Template } from "./Template.js";
+const Event = {
+    CONNECTED: "connected",
+    DISCONNECTED: "disconnected",
+};
 /**
  * Component class for creating custom elements.
  * Extends HTMLElement and provides lifecycle methods and attribute handling.
@@ -14,7 +17,7 @@ export class Component extends HTMLElement {
      * @category Template
      * @hidden
      */
-    static Template = Template;
+    static Template = null;
     /**
      * When extending `Component`, override attributes.
      * Only attributes defined the Attributes object will be observed in DOM
@@ -35,6 +38,12 @@ export class Component extends HTMLElement {
         return Object.values(this.Attributes);
     }
     /**
+     * The configuration object for the component.
+     * @category Configuration
+     * @hidden
+     */
+    _configuration;
+    /**
      * The shadow root of the component if it exists.
      * @hidden
      */
@@ -42,9 +51,18 @@ export class Component extends HTMLElement {
     /**
      * @hidden
      */
-    constructor() {
+    constructor(configuration) {
         super();
-        this.template && this._addTemplate();
+        configuration && (this._configuration = configuration);
+        this.configuration?.template?.id && this._addTemplate();
+    }
+    /**
+     * The configuration object of the component exposed as a readonly accessor.
+     * @category Configuration
+     * @hidden
+     */
+    get configuration() {
+        return this._configuration;
     }
     /**
      * The shadow root of the component exposed as a readonly accessor.
@@ -53,22 +71,6 @@ export class Component extends HTMLElement {
      */
     get root() {
         return this._root;
-    }
-    /**
-     * Optional readonly accessor with HTML Template id to use if template is required
-     * @category Configuration
-     */
-    /* istanbul ignore next */
-    get template() {
-        return undefined;
-    }
-    /**
-     * Optional readonly access with CSS style to use if style is required
-     * @category Configuration
-     */
-    /* istanbul ignore next */
-    get css() {
-        return undefined;
     }
     /**
      * The connected callback is called when the element is added to the DOM.
@@ -80,7 +82,7 @@ export class Component extends HTMLElement {
         this._initialize();
         this._cacheElements();
         this._addEventListeners();
-        this._dispatchEvent("connected");
+        this._dispatchEvent(Event.CONNECTED);
     }
     /**
      * The disconnected callback is called when the element is removed from the DOM.
@@ -90,7 +92,7 @@ export class Component extends HTMLElement {
      */
     disconnectedCallback() {
         this._removeEventListeners();
-        this._dispatchEvent("disconnected");
+        this._dispatchEvent(Event.DISCONNECTED);
     }
     /**
      * The attributeChangedCallback is called when one of the observed attributes is added, removed, or changed.
@@ -153,7 +155,8 @@ export class Component extends HTMLElement {
      * Only needed if the component has its own Layout.
      * @hidden
      */
-    _loadTemplate = () => this.template && this._root.appendChild(this._cloneTemplate());
+    _loadTemplate = () => this.configuration?.template?.id &&
+        this._root.appendChild(this._cloneTemplate());
     /**
      * Not required by all components.
      * Only needed if the component has its own Layout.
@@ -167,14 +170,15 @@ export class Component extends HTMLElement {
      * @hidden
      * @returns {HTMLTemplateElement} - The template element from the DOM.
      **/
-    _getTemplate = () => document.getElementById(this.template);
+    _getTemplate = () => document.getElementById(this.configuration?.template?.id);
     /**
      * Not required by all components.
      * Only needed if the component has its own Style.
      * @hidden
      **/
     /* istanbul ignore next */
-    _loadStyle = () => this.css && this._root.appendChild(this._createStylesheet());
+    _loadStyle = () => this.configuration?.css?.name &&
+        this._root.appendChild(this._createStylesheet());
     /**
      * Not required by all components.
      * Only needed if the component has its own Layout.
@@ -195,7 +199,7 @@ export class Component extends HTMLElement {
     _createStylesheet = () => {
         const link = document.createElement("link");
         link.rel = "stylesheet";
-        link.href = new URL(this.css, import.meta.url).href;
+        link.href = new URL(this.configuration?.css?.name, this.configuration.url).href;
         return link;
     };
 }

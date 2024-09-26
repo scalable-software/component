@@ -1,7 +1,15 @@
 /**
  * @module Core
  */
-import { Template } from "./Template.js";
+export type Configuration = {
+    url: string;
+    template?: {
+        id: string;
+    };
+    css?: {
+        name: string;
+    };
+};
 /**
  * Component class for creating custom elements.
  * Extends HTMLElement and provides lifecycle methods and attribute handling.
@@ -14,7 +22,7 @@ export declare class Component extends HTMLElement {
      * @category Template
      * @hidden
      */
-    static Template: typeof Template;
+    static Template: any;
     /**
      * When extending `Component`, override attributes.
      * Only attributes defined the Attributes object will be observed in DOM
@@ -30,6 +38,12 @@ export declare class Component extends HTMLElement {
      */
     static get observedAttributes(): string[];
     /**
+     * The configuration object for the component.
+     * @category Configuration
+     * @hidden
+     */
+    private _configuration;
+    /**
      * The shadow root of the component if it exists.
      * @hidden
      */
@@ -37,23 +51,19 @@ export declare class Component extends HTMLElement {
     /**
      * @hidden
      */
-    constructor();
+    constructor(configuration?: Configuration);
+    /**
+     * The configuration object of the component exposed as a readonly accessor.
+     * @category Configuration
+     * @hidden
+     */
+    get configuration(): Configuration;
     /**
      * The shadow root of the component exposed as a readonly accessor.
      * @category Configuration
      * @hidden
      */
     get root(): ShadowRoot;
-    /**
-     * Optional readonly accessor with HTML Template id to use if template is required
-     * @category Configuration
-     */
-    get template(): any;
-    /**
-     * Optional readonly access with CSS style to use if style is required
-     * @category Configuration
-     */
-    get css(): any;
     /**
      * The connected callback is called when the element is added to the DOM.
      * It is used for initial setup tasks like loading templates, caching elements, and adding event listeners.

@@ -2,28 +2,26 @@ import * as help from "./helper.js";
 
 import { Component, Template } from "../../src/Index.js";
 
+import { Event } from "../../src/Index.js";
+
 /**
  * Test Component
  */
 const Attribute = {
   STATE: "state",
-};
+} as const;
+
 const State = {
   DEFAULT: "default",
   UPDATE: "update",
-};
-
-const Event = {
-  CONNECTED: "connected",
-  DISCONNECTED: "disconnected",
-};
+} as const;
 
 const Hook = {
   INITIALIZE: "_initialize",
   CACHE_ELEMENTS: "_cacheElements",
   ADD_EVENT_LISTENERS: "_addEventListeners",
   REMOVE_EVENT_LISTENERS: "_removeEventListeners",
-};
+} as const;
 
 /**
  * Test Component with Attribute, State and Life-Cycle Hooks
@@ -47,7 +45,7 @@ class Test extends Component {
     return Attribute;
   }
   protected _attributeHandlers = {
-    [Attribute.STATE]: (value: string) => (this.state = value),
+    [Attribute.STATE]: (value) => (this.state = value),
   };
 
   /**

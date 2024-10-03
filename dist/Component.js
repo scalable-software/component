@@ -1,10 +1,7 @@
 /**
  * @module Core
  */
-const Event = {
-    CONNECTED: "connected",
-    DISCONNECTED: "disconnected",
-};
+import { Event } from "./Component.meta.js";
 /**
  * Component class for creating custom elements.
  * Extends HTMLElement and provides lifecycle methods and attribute handling.

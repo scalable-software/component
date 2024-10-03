@@ -1,15 +1,7 @@
 /**
  * @module Core
  */
-export type Configuration = {
-    url: string;
-    template?: {
-        id: string;
-    };
-    css?: {
-        name: string;
-    };
-};
+import { type Configuration } from "./Component.meta.js";
 /**
  * Component class for creating custom elements.
  * Extends HTMLElement and provides lifecycle methods and attribute handling.

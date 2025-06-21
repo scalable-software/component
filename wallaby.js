@@ -1,6 +1,7 @@
 module.exports = function (wallaby) {
   return {
     files: [
+      "test/helper/helper.js",
       "importmap/inject.js",
       "importmap/importmap.test.js",
       "src/**/*.ts",

@@ -5,9 +5,11 @@ module.exports = function (config) {
     frameworks: ["jasmine"],
     proxies: {
       "/src/": "/base/src/",
-      "/test/": "/base/test/",
+      "/test/unit/": "/base/test/unit/",
+      "/test/helper/": "/base/test/helper/",
     },
     files: [
+      { pattern: "./test/helper/helper.js" },
       { pattern: "./importmap/inject.js" },
       { pattern: "./importmap/importmap.test.js" },
       { pattern: "./src/**/*.js", type: "module" },

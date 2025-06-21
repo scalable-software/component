@@ -1,5 +1,3 @@
-import * as help from "./helper.js";
-
 import { Component, Configuration, Template } from "../../src/Index.js";
 
 const configuration: Configuration = {
@@ -28,7 +26,7 @@ class TestLayout extends Component {
 
 describe("Given Component is defined in component registry", () => {
   beforeEach(() => {
-    help.define(TestLayout.Tag, TestLayout);
+    define(TestLayout.Tag, TestLayout);
   });
   it("then custom element registry contain Component", () => {
     expect(customElements.get(TestLayout.Tag)).toBeDefined();
@@ -38,7 +36,7 @@ describe("Given Component is defined in component registry", () => {
       await TestLayout.Template.load("./templates/Test.template.html");
     });
     afterEach(() => {
-      help.remove("template");
+      remove("template");
     });
     it("then the HTML Template exist in DOM", () => {
       expect(document.querySelector("template")).toBeDefined();
@@ -48,7 +46,7 @@ describe("Given Component is defined in component registry", () => {
 
 describe("Given Component is defined in component registry", () => {
   beforeEach(() => {
-    help.define(TestLayout.Tag, TestLayout);
+    define(TestLayout.Tag, TestLayout);
   });
   describe("and an HTML Template added to DOM", () => {
     let template;
@@ -58,7 +56,7 @@ describe("Given Component is defined in component registry", () => {
       );
     });
     afterEach(() => {
-      help.remove("template");
+      remove("template");
     });
     it("then the HTML Template exist in DOM", () => {
       expect(document.querySelector("template")).toBeDefined();
@@ -66,8 +64,8 @@ describe("Given Component is defined in component registry", () => {
     describe("when a new Component is added to DOM", () => {
       let component: TestLayout;
       beforeEach(async () => {
-        component = help.add<TestLayout>(TestLayout.Tag);
-        await help.whenDefined(TestLayout.Tag);
+        component = add<TestLayout>(TestLayout.Tag);
+        await whenDefined(TestLayout.Tag);
       });
       afterEach(() => {
         component.remove();

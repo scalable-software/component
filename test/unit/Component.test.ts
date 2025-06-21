@@ -1,5 +1,3 @@
-import * as help from "./helper.js";
-
 import { Component, Template } from "../../src/Index.js";
 
 import { Event } from "../../src/Index.js";
@@ -116,13 +114,13 @@ describe("Given Component is defined", () => {
 describe("Given Component is defined", () => {
   describe("and the Component is defined in the custom element registry", () => {
     beforeEach(() => {
-      help.define(Test.Tag, Test);
+      define(Test.Tag, Test);
     });
     describe("when a new Component instance is added to DOM", () => {
       let component: Test;
       beforeEach(async () => {
-        component = help.add<Test>(Test.Tag);
-        await help.whenDefined(Test.Tag);
+        component = add<Test>(Test.Tag);
+        await whenDefined(Test.Tag);
       });
       afterEach(() => {
         component.remove();
@@ -143,13 +141,13 @@ describe("Given Component is defined", () => {
 describe("Given Component is defined", () => {
   describe("and the Component is defined in the custom element registry", () => {
     beforeEach(() => {
-      help.define(Test.Tag, Test);
+      define(Test.Tag, Test);
     });
     describe("when a new Component instance is added to DOM", () => {
       let component: Test;
       beforeEach(async () => {
-        component = help.add<Test>(Test.Tag);
-        await help.whenDefined(Test.Tag);
+        component = add<Test>(Test.Tag);
+        await whenDefined(Test.Tag);
       });
       afterEach(() => {
         component.remove();
@@ -173,7 +171,7 @@ describe("Given Component is defined", () => {
 describe("Given Component is defined", () => {
   describe("and the Component is defined in the custom element registry", () => {
     beforeEach(() => {
-      help.define(Test.Tag, Test);
+      define(Test.Tag, Test);
     });
     describe("and a new Component instance is created", () => {
       let component: Test;
@@ -191,7 +189,7 @@ describe("Given Component is defined", () => {
         });
         describe("when the component appended to the DOM", () => {
           beforeEach(() => {
-            help.append(component);
+            append(component);
           });
           afterEach(() => {
             component.remove();
@@ -223,19 +221,19 @@ describe("Given Component is defined", () => {
 describe("Given Component is defined", () => {
   describe("and the Component is defined in the custom element registry", () => {
     beforeEach(() => {
-      help.define(Test.Tag, Test);
+      define(Test.Tag, Test);
     });
     describe("and a new component instance is added to the DOM", () => {
       let component: Test;
       beforeEach(async () => {
-        component = help.add<Test>(Test.Tag);
+        component = add<Test>(Test.Tag);
       });
       afterEach(() => {
         component.remove();
       });
       describe("and the component is defined in custom element registry", () => {
         beforeEach(async () => {
-          await help.whenDefined(Test.Tag);
+          await whenDefined(Test.Tag);
         });
         it("then component._initialize method was invoked", () => {
           expect(component[Hook.INITIALIZE]).toHaveBeenCalled();
@@ -265,19 +263,19 @@ describe("Given Component is defined", () => {
 describe("Given Component is defined", () => {
   describe("and the Component is defined in the custom element registry", () => {
     beforeEach(() => {
-      help.define(Test.Tag, Test);
+      define(Test.Tag, Test);
     });
     describe("and a new component instance is added to the DOM", () => {
       let component: Test;
       beforeEach(async () => {
-        component = help.add<Test>(Test.Tag);
+        component = add<Test>(Test.Tag);
       });
       afterEach(() => {
         component.remove();
       });
       describe("and the component is defined in custom element registry", () => {
         beforeEach(async () => {
-          await help.whenDefined(Test.Tag);
+          await whenDefined(Test.Tag);
         });
         it("then component.state is State.DEFAULT", () => {
           expect(component.state).toBe(State.DEFAULT);

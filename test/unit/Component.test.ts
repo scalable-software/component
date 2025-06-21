@@ -71,8 +71,8 @@ class Test extends Component {
 /**
  * Component Existence
  */
-describe("Given Component imported", () => {
-  it("then Component is defined", () => {
+given("Component imported", () => {
+  then("Component is defined", () => {
     expect(Component).toBeDefined();
   });
 });
@@ -80,14 +80,14 @@ describe("Given Component imported", () => {
 /**
  * Static Properties Existence
  */
-describe("Given Component is defined", () => {
-  it("then Component.Template is defined", () => {
+given("Component is defined", () => {
+  then("Component.Template is defined", () => {
     expect(Component.Template).toBeDefined();
   });
-  it("then Component.Attributes is defined", () => {
+  then("Component.Attributes is defined", () => {
     expect(Component.Attributes).toBeDefined();
   });
-  it("then Component.observedAttributes is defined", () => {
+  then("Component.observedAttributes is defined", () => {
     expect(Component.observedAttributes).toBeDefined();
   });
 });
@@ -95,14 +95,14 @@ describe("Given Component is defined", () => {
 /**
  * Static Properties Behavior
  */
-describe("Given Component is defined", () => {
-  describe("when accessing Component.Attributes", () => {
-    it("then an empty array is returned", () => {
+given("Component is defined", () => {
+  when("accessing Component.Attributes", () => {
+    then("an empty array is returned", () => {
       expect(Component.Attributes).toEqual([]);
     });
   });
-  describe("when accessing Component.observedAttributes", () => {
-    it("then an empty array is returned", () => {
+  when("accessing Component.observedAttributes", () => {
+    then("an empty array is returned", () => {
       expect(Component.observedAttributes).toEqual([]);
     });
   });
@@ -111,12 +111,12 @@ describe("Given Component is defined", () => {
 /**
  * Instance Properties Existence
  */
-describe("Given Component is defined", () => {
-  describe("and the Component is defined in the custom element registry", () => {
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
     beforeEach(() => {
       define(Test.Tag, Test);
     });
-    describe("when a new Component instance is added to DOM", () => {
+    when("a new Component instance is added to DOM", () => {
       let component: Test;
       beforeEach(async () => {
         component = add<Test>(Test.Tag);
@@ -125,10 +125,10 @@ describe("Given Component is defined", () => {
       afterEach(() => {
         component.remove();
       });
-      it("then component.root is undefined", () => {
+      then("component.root is undefined", () => {
         expect(component.root).toBeUndefined();
       });
-      it("then component.configuration is undefined", () => {
+      then("component.configuration is undefined", () => {
         expect(component.configuration).toBeUndefined();
       });
     });
@@ -138,12 +138,12 @@ describe("Given Component is defined", () => {
 /**
  * Instance Method Existence
  */
-describe("Given Component is defined", () => {
-  describe("and the Component is defined in the custom element registry", () => {
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
     beforeEach(() => {
       define(Test.Tag, Test);
     });
-    describe("when a new Component instance is added to DOM", () => {
+    when("a new Component instance is added to DOM", () => {
       let component: Test;
       beforeEach(async () => {
         component = add<Test>(Test.Tag);
@@ -152,13 +152,13 @@ describe("Given Component is defined", () => {
       afterEach(() => {
         component.remove();
       });
-      it("then component.connectedCallback method is defined", () => {
+      then("component.connectedCallback method is defined", () => {
         expect(component.connectedCallback).toBeInstanceOf(Function);
       });
-      it("then component.disconnectedCallback method is defined", () => {
+      then("component.disconnectedCallback method is defined", () => {
         expect(component.disconnectedCallback).toBeInstanceOf(Function);
       });
-      it("then component.attributeChangedCallback method is defined", () => {
+      then("component.attributeChangedCallback method is defined", () => {
         expect(component.attributeChangedCallback).toBeInstanceOf(Function);
       });
     });
@@ -168,17 +168,17 @@ describe("Given Component is defined", () => {
 /**
  * Component Events
  */
-describe("Given Component is defined", () => {
-  describe("and the Component is defined in the custom element registry", () => {
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
     beforeEach(() => {
       define(Test.Tag, Test);
     });
-    describe("and a new Component instance is created", () => {
+    and("a new Component instance is created", () => {
       let component: Test;
       beforeEach(() => {
         component = new Test();
       });
-      describe("and a listener for each event is registered", () => {
+      and("a listener for each event is registered", () => {
         let connected: jasmine.Spy;
         let disconnected: jasmine.Spy;
         beforeEach(async () => {
@@ -187,23 +187,23 @@ describe("Given Component is defined", () => {
           component.addEventListener(Event.CONNECTED, connected);
           component.addEventListener(Event.DISCONNECTED, disconnected);
         });
-        describe("when the component appended to the DOM", () => {
+        when("the component appended to the DOM", () => {
           beforeEach(() => {
             append(component);
           });
           afterEach(() => {
             component.remove();
           });
-          it("then the connected listeners is invoked", () => {
+          then("the connected listeners is invoked", () => {
             requestAnimationFrame(() => {
               expect(connected).toHaveBeenCalled();
             });
           });
-          describe("when the component is removed from the DOM", () => {
+          when("the component is removed from the DOM", () => {
             beforeEach(() => {
               component.remove();
             });
-            it("then the disconnected listeners is invoked", () => {
+            then("the disconnected listeners is invoked", () => {
               requestAnimationFrame(() => {
                 expect(disconnected).toHaveBeenCalled();
               });
@@ -218,12 +218,12 @@ describe("Given Component is defined", () => {
 /**
  * Component Life-Cycle Hooks
  */
-describe("Given Component is defined", () => {
-  describe("and the Component is defined in the custom element registry", () => {
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
     beforeEach(() => {
       define(Test.Tag, Test);
     });
-    describe("and a new component instance is added to the DOM", () => {
+    and("a new component instance is added to the DOM", () => {
       let component: Test;
       beforeEach(async () => {
         component = add<Test>(Test.Tag);
@@ -231,24 +231,24 @@ describe("Given Component is defined", () => {
       afterEach(() => {
         component.remove();
       });
-      describe("and the component is defined in custom element registry", () => {
+      and("the component is defined in custom element registry", () => {
         beforeEach(async () => {
           await whenDefined(Test.Tag);
         });
-        it("then component._initialize method was invoked", () => {
+        then("component._initialize method was invoked", () => {
           expect(component[Hook.INITIALIZE]).toHaveBeenCalled();
         });
-        it("then component._cacheElements method was invoked", () => {
+        then("component._cacheElements method was invoked", () => {
           expect(component[Hook.CACHE_ELEMENTS]).toHaveBeenCalled();
         });
-        it("then then component._addEventListeners method invoked", () => {
+        then("component._addEventListeners method invoked", () => {
           expect(component[Hook.ADD_EVENT_LISTENERS]).toHaveBeenCalled();
         });
-        describe("when the component is removed from the DOM", () => {
+        when("component is removed from the DOM", () => {
           beforeEach(() => {
             component.remove();
           });
-          it("then then component._removeEventListeners method was invoked", () => {
+          then("component._removeEventListeners method was invoked", () => {
             expect(component[Hook.REMOVE_EVENT_LISTENERS]).toHaveBeenCalled();
           });
         });
@@ -260,12 +260,12 @@ describe("Given Component is defined", () => {
 /**
  * Component Attributes
  */
-describe("Given Component is defined", () => {
-  describe("and the Component is defined in the custom element registry", () => {
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
     beforeEach(() => {
       define(Test.Tag, Test);
     });
-    describe("and a new component instance is added to the DOM", () => {
+    and("a new component instance is added to the DOM", () => {
       let component: Test;
       beforeEach(async () => {
         component = add<Test>(Test.Tag);
@@ -273,18 +273,18 @@ describe("Given Component is defined", () => {
       afterEach(() => {
         component.remove();
       });
-      describe("and the component is defined in custom element registry", () => {
+      and("the component is defined in custom element registry", () => {
         beforeEach(async () => {
           await whenDefined(Test.Tag);
         });
-        it("then component.state is State.DEFAULT", () => {
+        then("component.state is State.DEFAULT", () => {
           expect(component.state).toBe(State.DEFAULT);
         });
-        describe("when the component state attribute is set to State.UPDATE", () => {
+        when("the component state attribute is set to State.UPDATE", () => {
           beforeEach(() => {
             component.setAttribute(Attribute.STATE, State.UPDATE);
           });
-          it("then component.state is State.UPDATE", () => {
+          then("component.state is State.UPDATE", () => {
             expect(component.state).toBe(State.UPDATE);
           });
         });

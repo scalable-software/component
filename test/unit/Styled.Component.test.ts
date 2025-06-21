@@ -27,31 +27,31 @@ class TestStyled extends Component {
   }
 }
 
-describe("Given Component is defined in component registry", () => {
+given("Component is defined in component registry", () => {
   beforeEach(() => {
     define(TestStyled.Tag, TestStyled);
   });
-  it("then the custom element registry contain Component", () => {
+  then("the custom element registry contain Component", () => {
     expect(customElements.get(TestStyled.Tag)).toBeDefined();
   });
-  describe("and an HTML Template added to DOM", () => {
+  and("an HTML Template added to DOM", () => {
     beforeEach(async () => {
       await TestStyled.Template.load("./templates/Test.template.html");
     });
     afterEach(() => {
       remove("template");
     });
-    it("then the HTML Template exist in DOM", () => {
+    then("the HTML Template exist in DOM", () => {
       expect(document.querySelector("template")).toBeDefined();
     });
   });
 });
 
-describe("Given Component is defined in component registry", () => {
+given("Component is defined in component registry", () => {
   beforeEach(() => {
     define(TestStyled.Tag, TestStyled);
   });
-  describe("an HTML Template added to DOM", () => {
+  and("an HTML Template added to DOM", () => {
     let template;
     beforeEach(async () => {
       template = await TestStyled.Template.load(
@@ -61,10 +61,10 @@ describe("Given Component is defined in component registry", () => {
     afterEach(() => {
       remove("template");
     });
-    it("then the HTML Template exist in DOM", () => {
+    then("the HTML Template exist in DOM", () => {
       expect(document.querySelector("template")).toBeDefined();
     });
-    describe("and a new Component is added to DOM", () => {
+    and("a new Component is added to DOM", () => {
       let component: TestStyled;
       beforeEach(async () => {
         component = add<TestStyled>(TestStyled.Tag);
@@ -73,35 +73,35 @@ describe("Given Component is defined in component registry", () => {
       afterEach(() => {
         component.remove();
       });
-      it("then component.configuration is defined", () => {
+      then("component.configuration is defined", () => {
         expect(component.configuration).toBeDefined();
         const test = new URL(
           component.configuration?.css?.name,
           component.configuration.url
         ).href;
       });
-      describe("and component.configuration is defined", () => {
-        it("then component.configuration.template is defined", () => {
+      and("component.configuration is defined", () => {
+        then("component.configuration.template is defined", () => {
           expect(component.configuration.template).toBeDefined();
         });
-        it("then component.configuration.template.id is defined", () => {
+        then("component.configuration.template.id is defined", () => {
           expect(component.configuration.template.id).toBeDefined();
         });
-        it("then component.configuration.css is defined", () => {
+        then("component.configuration.css is defined", () => {
           expect(component.configuration.css).toBeDefined();
         });
-        it("then component.configuration.css.name is defined", () => {
+        then("component.configuration.css.name is defined", () => {
           expect(component.configuration.css.name).toBeDefined();
         });
       });
-      it("then component.root is defined", () => {
+      then("component.root is defined", () => {
         expect(component.root).toBeDefined();
       });
-      describe("and component.root is defined", () => {
-        it("then component.root is a clone of the template in DOM", () => {
+      and("component.root is defined", () => {
+        then("component.root is a clone of the template in DOM", () => {
           expect(component.root.innerHTML).toContain(template.innerHTML);
         });
-        it("then component.root contain stylesheet", () => {
+        then("component.root contain stylesheet", () => {
           expect(component.root.innerHTML).toContain("stylesheet");
         });
       });

@@ -1,7 +1,7 @@
 import { Template } from "@scalable.software/component";
 
-describe("Given Template imported", () => {
-  it("then Template is defined", () => {
+given("Template imported", () => {
+  then("Template is defined", () => {
     expect(Template).toBeDefined();
   });
 });
@@ -9,13 +9,13 @@ describe("Given Template imported", () => {
 /**
  * Instance Methods Existence
  */
-describe("Given Template is defined", () => {
-  describe("and new instance is created", () => {
+given("Template is defined", () => {
+  and("new instance is created", () => {
     let template: Template;
     beforeEach(() => {
       template = new Template();
     });
-    it("then Template.load is defined", () => {
+    then("Template.load is defined", () => {
       expect(template.load).toBeDefined();
     });
   });
@@ -24,26 +24,29 @@ describe("Given Template is defined", () => {
 /**
  * Instance Methods Behavior
  */
-describe("Given Template is defined", () => {
-  describe("and new instance is created without url parameter", () => {
+given("Template is defined", () => {
+  and("new instance is created without url parameter", () => {
     let template: Template;
     beforeEach(() => {
       template = new Template();
     });
-    describe("when template.load() is invoked with valid filename and valid HTML Template", () => {
-      let filename: string;
-      beforeEach(async () => {
-        filename = "./test/unit/templates/Test.template.html";
-        await template.load(filename);
-      });
-      afterEach(() => {
-        document.body.innerHTML = "";
-      });
-      it("then the document.body contain a template", async () => {
-        expect(document.body.querySelector("template")).toBeDefined();
-      });
-    });
-    describe("when template.load() is invoked with invalid HTML Template", () => {
+    when(
+      "template.load() is invoked with valid filename and valid HTML Template",
+      () => {
+        let filename: string;
+        beforeEach(async () => {
+          filename = "./test/unit/templates/Test.template.html";
+          await template.load(filename);
+        });
+        afterEach(() => {
+          document.body.innerHTML = "";
+        });
+        then("the document.body contain a template", async () => {
+          expect(document.body.querySelector("template")).toBeDefined();
+        });
+      }
+    );
+    when("template.load() is invoked with invalid HTML Template", () => {
       let filename: string;
       beforeEach(async () => {
         filename = "./test/unit/templates/Invalid.template.html";
@@ -51,19 +54,19 @@ describe("Given Template is defined", () => {
       afterEach(() => {
         document.body.innerHTML = "";
       });
-      it("then an error: 'Error extracting template' is thrown", async () => {
+      then("an error: 'Error extracting template' is thrown", async () => {
         await expectAsync(template.load(filename)).toBeRejectedWithError(
           Error,
           "Error extracting template"
         );
       });
     });
-    describe("when template.load() is invoked with invalid filename", () => {
+    when("template.load() is invoked with invalid filename", () => {
       let filename: string;
       beforeEach(async () => {
         filename = "./test/template/Invalid.html";
       });
-      it("then an error: 'Error fetching template' is thrown", async () => {
+      then("an error: 'Error fetching template' is thrown", async () => {
         await expectAsync(template.load(filename)).toBeRejectedWithError(
           Error,
           "Error fetching template"
@@ -71,25 +74,28 @@ describe("Given Template is defined", () => {
       });
     });
   });
-  describe("and new instance is created with `import.meta.url` parameter", () => {
+  and("new instance is created with `import.meta.url` parameter", () => {
     let template: Template;
     beforeEach(() => {
       template = new Template(import.meta.url);
     });
-    describe("when template.load() is invoked with valid filename and valid HTML Template", () => {
-      let filename: string;
-      beforeEach(async () => {
-        filename = "./templates/Test.template.html";
-        await template.load(filename);
-      });
-      afterEach(() => {
-        document.body.innerHTML = "";
-      });
-      it("then the document.body contain a template", async () => {
-        expect(document.body.querySelector("template")).toBeDefined();
-      });
-    });
-    describe("when template.load() is invoked with invalid HTML Template", () => {
+    when(
+      "template.load() is invoked with valid filename and valid HTML Template",
+      () => {
+        let filename: string;
+        beforeEach(async () => {
+          filename = "./templates/Test.template.html";
+          await template.load(filename);
+        });
+        afterEach(() => {
+          document.body.innerHTML = "";
+        });
+        then("the document.body contain a template", async () => {
+          expect(document.body.querySelector("template")).toBeDefined();
+        });
+      }
+    );
+    when("template.load() is invoked with invalid HTML Template", () => {
       let filename: string;
       beforeEach(async () => {
         filename = "./templates/Invalid.template.html";
@@ -97,19 +103,19 @@ describe("Given Template is defined", () => {
       afterEach(() => {
         document.body.innerHTML = "";
       });
-      it("then an error: 'Error extracting template' is thrown", async () => {
+      then("an error: 'Error extracting template' is thrown", async () => {
         await expectAsync(template.load(filename)).toBeRejectedWithError(
           Error,
           "Error extracting template"
         );
       });
     });
-    describe("when template.load() is invoked with invalid filename", () => {
+    when("template.load() is invoked with invalid filename", () => {
       let filename: string;
       beforeEach(async () => {
         filename = "./test/template/Invalid.html";
       });
-      it("then an error: 'Error fetching template' is thrown", async () => {
+      then("an error: 'Error fetching template' is thrown", async () => {
         await expectAsync(template.load(filename)).toBeRejectedWithError(
           Error,
           "Error fetching template"

@@ -2,9 +2,9 @@
  * @module Core
  */
 
-import { Event } from "./Component.meta.js";
+import { Event } from "./component.meta.js";
 
-import { type Configuration } from "./Component.meta.js";
+import { type Configuration } from "./component.meta.js";
 
 /**
  * Component class for creating custom elements.

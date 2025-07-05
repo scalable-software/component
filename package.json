@@ -9,11 +9,11 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/Index.js"
+      "import": "./dist/index.js"
     }
   },
-  "types": "dist/Index.d.ts",
-  "module": "dist/Index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
   "scripts": {
     "clean.test": "node ./tasks/clean.test.mjs",
     "pretest": "npm run clean.test && tsc --project tsconfig.test.json",

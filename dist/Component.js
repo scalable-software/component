@@ -1,7 +1,7 @@
 /**
  * @module Core
  */
-import { Event } from "./Component.meta.js";
+import { Event } from "./component.meta.js";
 /**
  * Component class for creating custom elements.
  * Extends HTMLElement and provides lifecycle methods and attribute handling.

@@ -17,7 +17,7 @@ module.exports = function (wallaby) {
         inlineSources: true,
         baseUrl: "./",
         paths: {
-          "@scalable.software/component": ["./src/Index.js"],
+          "@scalable.software/component": ["./src/index.js"],
         },
       }),
     },

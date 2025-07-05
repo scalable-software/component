@@ -7,7 +7,7 @@
     "inlineSources": true,
     "baseUrl": "./",
     "paths": {
-      "@scalable.software/component": ["./src/Index.js"]
+      "@scalable.software/component": ["./src/index.js"]
     },
     "declaration": false
   },
@@ -19,7 +19,7 @@
   ],
   "exclude": ["node_modules", "dist", "tasks"],
   "typedocOptions": {
-    "entryPoints": ["./src/Index.ts"],
+    "entryPoints": ["./src/index.ts"],
     "excludePrivate": true,
     "excludeProtected": true,
     "disableSources": true,

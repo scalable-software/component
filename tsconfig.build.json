@@ -8,7 +8,7 @@
     "outDir": "./dist/",
     "baseUrl": "./",
     "paths": {
-      "@scalable.software/component": ["./src/Index.js"]
+      "@scalable.software/component": ["./src/index.js"]
     }
   },
   "include": ["./src/**/*"]

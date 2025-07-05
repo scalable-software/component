@@ -1,19 +1,19 @@
 /**
  * @category Metadata
  **/
-export { Event } from "./Component.meta.js";
+export { Event } from "./component.meta.js";
 
 /**
  * @category Types
  **/
-export { type Configuration, type Handler } from "./Component.meta.js";
+export { type Configuration, type Handler } from "./component.meta.js";
 
 /**
  * @category Component
  **/
-export { Template } from "./Template.js";
+export { Template } from "./template.js";
 
 /**
  * @category Component
  **/
-export { Component } from "./Component.js";
+export { Component } from "./component.js";

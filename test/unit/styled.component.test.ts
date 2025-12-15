@@ -6,7 +6,7 @@ const configuration: Configuration = {
     id: "template",
   },
   css: {
-    name: "./style/Test.style.css",
+    name: "./style/test.style.css",
   },
 };
 

@@ -16,4 +16,4 @@ export { Template } from "./template.js";
 /**
  * @category Component
  **/
-export { Component } from "./Component.js";
+export { Component } from "./component.js";

@@ -1,4 +1,4 @@
-import { Component, Configuration, Template } from "../../src/index.js";
+import { Component, Configuration, Template } from "../../src/Index.js";
 
 const configuration: Configuration = {
   url: import.meta.url,

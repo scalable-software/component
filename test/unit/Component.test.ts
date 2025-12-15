@@ -1,6 +1,6 @@
-import { Component, Template } from "../../src/index.js";
+import { Component, Template } from "../../src/Index.js";
 
-import { Event } from "../../src/index.js";
+import { Event } from "../../src/Index.js";
 
 /**
  * Test Component

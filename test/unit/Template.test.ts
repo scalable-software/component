@@ -1,4 +1,4 @@
-import { Template } from "@scalable.software/component";
+import { Template } from "../../src/Template.js";
 
 given("Template imported", () => {
   then("Template is defined", () => {

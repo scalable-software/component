@@ -36,7 +36,7 @@ given("Component is defined in component registry", () => {
   });
   and("an HTML Template added to DOM", () => {
     beforeEach(async () => {
-      await TestStyled.Template.load("./templates/Test.template.html");
+      await TestStyled.Template.load("./templates/test.template.html");
     });
     afterEach(() => {
       remove("template");
@@ -55,7 +55,7 @@ given("Component is defined in component registry", () => {
     let template;
     beforeEach(async () => {
       template = await TestStyled.Template.load(
-        "./templates/Test.template.html"
+        "./templates/test.template.html"
       );
     });
     afterEach(() => {

@@ -35,7 +35,7 @@ given("Template is defined", () => {
       () => {
         let filename: string;
         beforeEach(async () => {
-          filename = "./test/unit/templates/Test.template.html";
+          filename = "./test/unit/templates/test.template.html";
           await template.load(filename);
         });
         afterEach(() => {
@@ -49,7 +49,7 @@ given("Template is defined", () => {
     when("template.load() is invoked with invalid HTML Template", () => {
       let filename: string;
       beforeEach(async () => {
-        filename = "./test/unit/templates/Invalid.template.html";
+        filename = "./test/unit/templates/invalid.template.html";
       });
       afterEach(() => {
         document.body.innerHTML = "";
@@ -64,7 +64,7 @@ given("Template is defined", () => {
     when("template.load() is invoked with invalid filename", () => {
       let filename: string;
       beforeEach(async () => {
-        filename = "./test/template/Invalid.html";
+        filename = "./test/template/invalid.html";
       });
       then("an error: 'Error fetching template' is thrown", async () => {
         await expectAsync(template.load(filename)).toBeRejectedWithError(
@@ -84,7 +84,7 @@ given("Template is defined", () => {
       () => {
         let filename: string;
         beforeEach(async () => {
-          filename = "./templates/Test.template.html";
+          filename = "./templates/test.template.html";
           await template.load(filename);
         });
         afterEach(() => {
@@ -98,7 +98,7 @@ given("Template is defined", () => {
     when("template.load() is invoked with invalid HTML Template", () => {
       let filename: string;
       beforeEach(async () => {
-        filename = "./templates/Invalid.template.html";
+        filename = "./templates/invalid.template.html";
       });
       afterEach(() => {
         document.body.innerHTML = "";
@@ -113,7 +113,7 @@ given("Template is defined", () => {
     when("template.load() is invoked with invalid filename", () => {
       let filename: string;
       beforeEach(async () => {
-        filename = "./test/template/Invalid.html";
+        filename = "./test/template/invalid.html";
       });
       then("an error: 'Error fetching template' is thrown", async () => {
         await expectAsync(template.load(filename)).toBeRejectedWithError(

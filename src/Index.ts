@@ -11,7 +11,7 @@ export { type Configuration, type Handler } from "./Component.meta.js";
 /**
  * @category Component
  **/
-export { Template } from "./Template.js";
+export { Template } from "./template.js";
 
 /**
  * @category Component

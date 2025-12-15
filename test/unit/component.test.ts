@@ -15,8 +15,8 @@ const State = {
 } as const;
 
 const Hook = {
+  CACHE: "_cache",
   INITIALIZE: "_initialize",
-  CACHE_ELEMENTS: "_cacheElements",
   ADD_EVENT_LISTENERS: "_addEventListeners",
   REMOVE_EVENT_LISTENERS: "_removeEventListeners",
 } as const;
@@ -60,8 +60,8 @@ class Test extends Component {
   /**
    * Component Life-Cycle Hooks
    */
+  protected _cache = jasmine.createSpy(Hook.CACHE);
   protected _initialize = jasmine.createSpy(Hook.INITIALIZE);
-  protected _cacheElements = jasmine.createSpy(Hook.CACHE_ELEMENTS);
   protected _addEventListeners = jasmine.createSpy(Hook.ADD_EVENT_LISTENERS);
   protected _removeEventListeners = jasmine.createSpy(
     Hook.REMOVE_EVENT_LISTENERS
@@ -238,8 +238,8 @@ given("Component is defined", () => {
         then("component._initialize method was invoked", () => {
           expect(component[Hook.INITIALIZE]).toHaveBeenCalled();
         });
-        then("component._cacheElements method was invoked", () => {
-          expect(component[Hook.CACHE_ELEMENTS]).toHaveBeenCalled();
+        then("component._cache method was invoked", () => {
+          expect(component[Hook.CACHE]).toHaveBeenCalled();
         });
         then("component._addEventListeners method invoked", () => {
           expect(component[Hook.ADD_EVENT_LISTENERS]).toHaveBeenCalled();

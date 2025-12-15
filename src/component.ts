@@ -88,8 +88,8 @@ export class Component extends HTMLElement {
    * @hidden
    */
   connectedCallback() {
+    this._cache();
     this._initialize();
-    this._cacheElements();
     this._addEventListeners();
     this._dispatchEvent(Event.CONNECTED);
   }
@@ -147,7 +147,7 @@ export class Component extends HTMLElement {
    * @category Hooks
    * @hidden
    */
-  protected _cacheElements = () => {};
+  protected _cache = () => {};
 
   /**
    * Not required by all components.

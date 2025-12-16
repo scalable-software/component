@@ -13,6 +13,10 @@ import { type Configuration } from "./component.meta.js";
  * @category Component
  */
 export class Component extends HTMLElement {
+  public static get Tag() {
+    return "app-component";
+  }
+
   /**
    * `Template.load(filename)` is used to load an HTML template packaged with the component.
    * @category Template
@@ -39,6 +43,39 @@ export class Component extends HTMLElement {
    */
   public static get observedAttributes(): string[] {
     return Object.values(this.Attributes);
+  }
+
+  /**
+   * Utility to get first reference to the component
+   * Optionally provide a value for the id attribute
+   * @category Utility
+   */
+  public static async get<T extends Component>(
+    this: { new (): T; Tag: string },
+    options?: { root?: ParentNode; id?: string }
+  ): Promise<T | null> {
+    const { root = document, id } = options ?? {};
+
+    await customElements.whenDefined(this.Tag);
+
+    return id
+      ? (root.querySelector(`${this.Tag}#${id}`) as T | null)
+      : (root.querySelector(this.Tag) as T | null);
+  }
+
+  /**
+   * Utility to get all references to the component
+   * @category Utility
+   */
+  public static async all<T extends Component>(
+    this: { new (): T; Tag: string },
+    options?: { root?: ParentNode }
+  ): Promise<T[]> {
+    const { root = document } = options ?? {};
+
+    await customElements.whenDefined(this.Tag);
+
+    return Array.from(root.querySelectorAll(this.Tag)) as T[];
   }
 
   /**

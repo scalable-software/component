@@ -9,6 +9,9 @@ import { Event } from "./component.meta.js";
  * @category Component
  */
 export class Component extends HTMLElement {
+    static get Tag() {
+        return "app-component";
+    }
     /**
      * `Template.load(filename)` is used to load an HTML template packaged with the component.
      * @category Template
@@ -33,6 +36,27 @@ export class Component extends HTMLElement {
      */
     static get observedAttributes() {
         return Object.values(this.Attributes);
+    }
+    /**
+     * Utility to get first reference to the component
+     * Optionally provide a value for the id attribute
+     * @category Utility
+     */
+    static async get(options) {
+        const { root = document, id } = options ?? {};
+        await customElements.whenDefined(this.Tag);
+        return id
+            ? root.querySelector(`${this.Tag}#${id}`)
+            : root.querySelector(this.Tag);
+    }
+    /**
+     * Utility to get all references to the component
+     * @category Utility
+     */
+    static async all(options) {
+        const { root = document } = options ?? {};
+        await customElements.whenDefined(this.Tag);
+        return Array.from(root.querySelectorAll(this.Tag));
     }
     /**
      * The configuration object for the component.
@@ -76,8 +100,8 @@ export class Component extends HTMLElement {
      * @hidden
      */
     connectedCallback() {
+        this._cache();
         this._initialize();
-        this._cacheElements();
         this._addEventListeners();
         this._dispatchEvent(Event.CONNECTED);
     }
@@ -115,18 +139,18 @@ export class Component extends HTMLElement {
     _attributeHandlers = {};
     /**
      * Not required by all components.
+     * Only needed if the component has its own Layout with elements which component logic has to interact with.
+     * @category Hooks
+     * @hidden
+     */
+    _cache = () => { };
+    /**
+     * Not required by all components.
      * Used for initializing component state or attributes.
      * @category Hooks
      * @hidden
      **/
     _initialize = () => { };
-    /**
-     * Not required by all components.
-     * Only needed if the component has its own Layout with elements which component logic has to interact with.
-     * @category Hooks
-     * @hidden
-     */
-    _cacheElements = () => { };
     /**
      * Not required by all components.
      * Only needed if the component uses event binding to interact with the DOM.

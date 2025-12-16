@@ -9,6 +9,7 @@ import { type Configuration } from "./component.meta.js";
  * @category Component
  */
 export declare class Component extends HTMLElement {
+    static get Tag(): string;
     /**
      * `Template.load(filename)` is used to load an HTML template packaged with the component.
      * @category Template
@@ -29,6 +30,28 @@ export declare class Component extends HTMLElement {
      * @hidden
      */
     static get observedAttributes(): string[];
+    /**
+     * Utility to get first reference to the component
+     * Optionally provide a value for the id attribute
+     * @category Utility
+     */
+    static get<T extends Component>(this: {
+        new (): T;
+        Tag: string;
+    }, options?: {
+        root?: ParentNode;
+        id?: string;
+    }): Promise<T | null>;
+    /**
+     * Utility to get all references to the component
+     * @category Utility
+     */
+    static all<T extends Component>(this: {
+        new (): T;
+        Tag: string;
+    }, options?: {
+        root?: ParentNode;
+    }): Promise<T[]>;
     /**
      * The configuration object for the component.
      * @category Configuration
@@ -91,18 +114,18 @@ export declare class Component extends HTMLElement {
     protected _attributeHandlers: {};
     /**
      * Not required by all components.
+     * Only needed if the component has its own Layout with elements which component logic has to interact with.
+     * @category Hooks
+     * @hidden
+     */
+    protected _cache: () => void;
+    /**
+     * Not required by all components.
      * Used for initializing component state or attributes.
      * @category Hooks
      * @hidden
      **/
     protected _initialize: () => void;
-    /**
-     * Not required by all components.
-     * Only needed if the component has its own Layout with elements which component logic has to interact with.
-     * @category Hooks
-     * @hidden
-     */
-    protected _cacheElements: () => void;
     /**
      * Not required by all components.
      * Only needed if the component uses event binding to interact with the DOM.

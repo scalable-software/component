@@ -135,19 +135,19 @@ export class Component extends HTMLElement {
 
   /**
    * Not required by all components.
-   * Used for initializing component state or attributes.
-   * @category Hooks
-   * @hidden
-   **/
-  protected _initialize = () => {};
-
-  /**
-   * Not required by all components.
    * Only needed if the component has its own Layout with elements which component logic has to interact with.
    * @category Hooks
    * @hidden
    */
   protected _cache = () => {};
+
+  /**
+   * Not required by all components.
+   * Used for initializing component state or attributes.
+   * @category Hooks
+   * @hidden
+   **/
+  protected _initialize = () => {};
 
   /**
    * Not required by all components.

@@ -108,6 +108,61 @@ given("Component is defined", () => {
   });
 });
 
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
+    beforeEach(() => {
+      define(Test.Tag, Test);
+    });
+    when("a new Component instance is added to DOM with no id", () => {
+      let component: Test;
+      beforeEach(async () => {
+        component = add<Test>(Test.Tag);
+        await whenDefined(Test.Tag);
+      });
+      afterEach(() => {
+        component.remove();
+      });
+      when("await Test.get() static method invoked", () => {
+        let reference;
+        beforeEach(async () => {
+          reference = await Test.get();
+        });
+        then("returned reference equal component", () => {
+          expect(reference).toEqual(component);
+        });
+      });
+      when("await Test.all() static method invoked", () => {
+        let reference;
+        beforeEach(async () => {
+          reference = await Test.all();
+        });
+        then("first returned reference equal component", () => {
+          expect(reference[0]).toEqual(component);
+        });
+      });
+    });
+    when("a new Component instance is added to DOM with id", () => {
+      let component: Test;
+      beforeEach(async () => {
+        component = add<Test>(Test.Tag, { id: "header" });
+        await whenDefined(Test.Tag);
+      });
+      afterEach(() => {
+        component.remove();
+      });
+      when("await Test.get({ id: 'header'}) static method invoked", () => {
+        let reference;
+        beforeEach(async () => {
+          reference = await Test.get({ id: "header" });
+        });
+        then("returned reference euqal component", () => {
+          expect(reference).toEqual(component);
+        });
+      });
+    });
+  });
+});
+
 /**
  * Instance Properties Existence
  */

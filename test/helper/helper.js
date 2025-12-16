@@ -93,6 +93,13 @@ globalThis.append = (element) => document.body.appendChild(element);
 globalThis.define = (tag, component) =>
   !customElements.get(tag) && customElements.define(tag, component);
 
+globalThis.setAttributes = (element, attributes) => {
+  Object.entries(attributes).forEach(([name, value]) => {
+    element.setAttribute(name, value);
+  });
+  return element;
+};
+
 globalThis.add = (tag, attributes) =>
   append(
     attributes != null ? setAttributes(create(tag), attributes) : create(tag)

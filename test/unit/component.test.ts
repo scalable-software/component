@@ -1,6 +1,4 @@
-import { Component, Template } from "../../src/index.js";
-
-import { Event } from "../../src/index.js";
+import { Component, Template, Event } from "@scalable.software/component";
 
 /**
  * Test Component

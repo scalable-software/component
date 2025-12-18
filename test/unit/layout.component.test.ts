@@ -1,4 +1,8 @@
-import { Component, Configuration, Template } from "../../src/index.js";
+import {
+  Component,
+  Configuration,
+  Template,
+} from "@scalable.software/component";
 
 const configuration: Configuration = {
   url: import.meta.url,

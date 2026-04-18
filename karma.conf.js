@@ -10,6 +10,8 @@ module.exports = function (config) {
     },
     files: [
       { pattern: "./test/helper/helper.js" },
+      { pattern: "./src/*.css" },
+      { pattern: "./src/*.html" },
       { pattern: "./importmap/inject.js" },
       { pattern: "./importmap/importmap.test.js" },
       { pattern: "./src/**/*.js", type: "module" },
@@ -20,7 +22,12 @@ module.exports = function (config) {
     preprocessors: {
       "src/**/!(*.test).js": ["karma-coverage-istanbul-instrumenter"],
     },
-    reporters: ["spec", "coverage-istanbul"],
+    plugins: ["karma-*", require("./tasks/json.reporter.js")],
+    reporters: ["spec", "coverage-istanbul", "json"],
+    jsonReporter: {
+      dir: "./report",
+      filename: "component.report.json",
+    },
     coverageIstanbulInstrumenter: {
       esModules: true,
     },
@@ -31,6 +38,6 @@ module.exports = function (config) {
     },
     browsers: ["ChromeHeadless"],
     singleRun: true,
-    logLevel: config.LOG_DISABLED,
+    logLevel: config.LOG_DISABLE,
   });
 };

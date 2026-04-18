@@ -5,6 +5,7 @@
 import { Event } from "./component.meta.js";
 
 import { type Configuration } from "./component.meta.js";
+import { type Template } from "./template.js";
 
 /**
  * Component class for creating custom elements.
@@ -22,7 +23,7 @@ export class Component extends HTMLElement {
    * @category Template
    * @hidden
    */
-  public static Template = null;
+  public static Template: Template | null = null;
 
   /**
    * When extending `Component`, override attributes.
@@ -52,7 +53,7 @@ export class Component extends HTMLElement {
    */
   public static async get<T extends Component>(
     this: { new (): T; Tag: string },
-    options?: { root?: ParentNode; id?: string }
+    options?: { root?: ParentNode; id?: string },
   ): Promise<T | null> {
     const { root = document, id } = options ?? {};
 
@@ -69,7 +70,7 @@ export class Component extends HTMLElement {
    */
   public static async all<T extends Component>(
     this: { new (): T; Tag: string },
-    options?: { root?: ParentNode }
+    options?: { root?: ParentNode },
   ): Promise<T[]> {
     const { root = document } = options ?? {};
 
@@ -83,13 +84,13 @@ export class Component extends HTMLElement {
    * @category Configuration
    * @hidden
    */
-  private _configuration: Configuration;
+  private _configuration: Configuration | null = null;
 
   /**
    * The shadow root of the component if it exists.
    * @hidden
    */
-  private _root: ShadowRoot;
+  private _root: ShadowRoot | null = null;
 
   /**
    * @hidden
@@ -115,7 +116,7 @@ export class Component extends HTMLElement {
    * @hidden
    */
   public get root(): ShadowRoot {
-    return this._root;
+    return this._root as ShadowRoot;
   }
 
   /**
@@ -149,7 +150,9 @@ export class Component extends HTMLElement {
    * @hidden
    */
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
-    const handler = this._attributeHandlers[name];
+    const handler = this._attributeHandlers[name] as
+      | ((newValue: any) => void)
+      | undefined;
     handler && handler(newValue);
   }
 
@@ -159,7 +162,7 @@ export class Component extends HTMLElement {
    */
   protected _dispatchEvent = (
     event: string,
-    eventInitDict?: CustomEventInit<unknown>
+    eventInitDict?: CustomEventInit<unknown>,
   ) => this.dispatchEvent(new CustomEvent(event, eventInitDict));
 
   /**
@@ -168,7 +171,9 @@ export class Component extends HTMLElement {
    * @category Hooks
    * @hidden
    */
-  protected _attributeHandlers = {};
+  protected _attributeHandlers = {} as {
+    [key: string]: ((newValue: any) => void) | undefined;
+  };
 
   /**
    * Not required by all components.
@@ -217,7 +222,7 @@ export class Component extends HTMLElement {
    */
   private _loadTemplate = () =>
     this.configuration?.template?.id &&
-    this._root.appendChild(this._cloneTemplate());
+    (this._root as ShadowRoot).appendChild(this._cloneTemplate());
 
   /**
    * Not required by all components.
@@ -235,7 +240,7 @@ export class Component extends HTMLElement {
    **/
   private _getTemplate = () =>
     document.getElementById(
-      this.configuration?.template?.id
+      (this.configuration?.template?.id as string) || "",
     ) as HTMLTemplateElement;
 
   /**
@@ -246,7 +251,7 @@ export class Component extends HTMLElement {
   /* istanbul ignore next */
   private _loadStyle = () =>
     this.configuration?.css?.name &&
-    this._root.appendChild(this._createStylesheet());
+    (this._root as ShadowRoot).appendChild(this._createStylesheet());
 
   /**
    * Not required by all components.
@@ -270,8 +275,8 @@ export class Component extends HTMLElement {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = new URL(
-      this.configuration?.css?.name,
-      this.configuration.url
+      this.configuration?.css?.name as string,
+      this.configuration?.url as string,
     ).href;
     return link;
   };

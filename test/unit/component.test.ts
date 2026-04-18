@@ -41,7 +41,7 @@ class Test extends Component {
     return Attribute;
   }
   protected _attributeHandlers = {
-    [Attribute.STATE]: (value) => (this.state = value),
+    [Attribute.STATE]: (value: any) => (this.state = value),
   };
 
   /**
@@ -62,7 +62,7 @@ class Test extends Component {
   protected _initialize = jasmine.createSpy(Hook.INITIALIZE);
   protected _addEventListeners = jasmine.createSpy(Hook.ADD_EVENT_LISTENERS);
   protected _removeEventListeners = jasmine.createSpy(
-    Hook.REMOVE_EVENT_LISTENERS
+    Hook.REMOVE_EVENT_LISTENERS,
   );
 }
 
@@ -121,7 +121,7 @@ given("Component is defined", () => {
         component.remove();
       });
       when("await Test.get() static method invoked", () => {
-        let reference;
+        let reference: Test | null;
         beforeEach(async () => {
           reference = await Test.get();
         });
@@ -130,7 +130,7 @@ given("Component is defined", () => {
         });
       });
       when("await Test.all() static method invoked", () => {
-        let reference;
+        let reference: Test[];
         beforeEach(async () => {
           reference = await Test.all();
         });
@@ -149,7 +149,7 @@ given("Component is defined", () => {
         component.remove();
       });
       when("await Test.get({ id: 'header'}) static method invoked", () => {
-        let reference;
+        let reference: Test | null;
         beforeEach(async () => {
           reference = await Test.get({ id: "header" });
         });
@@ -178,11 +178,11 @@ given("Component is defined", () => {
       afterEach(() => {
         component.remove();
       });
-      then("component.root is undefined", () => {
-        expect(component.root).toBeUndefined();
+      then("component.root is null", () => {
+        expect(component.root).toBeNull();
       });
-      then("component.configuration is undefined", () => {
-        expect(component.configuration).toBeUndefined();
+      then("component.configuration is null", () => {
+        expect(component.configuration).toBeNull();
       });
     });
   });

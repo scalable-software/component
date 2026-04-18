@@ -1,5 +1,5 @@
 /**
- * @module Core
+ * @module Component
  */
 
 export class Template {
@@ -26,7 +26,7 @@ export class Template {
    */
   private fetch = (filename: string): Promise<string> =>
     fetch(this.url(filename)).then((response) =>
-      response.ok ? response.text() : Promise.reject(this.fetchingError)
+      response.ok ? response.text() : Promise.reject(this.fetchingError),
     );
 
   /**

@@ -1,8 +1,6 @@
-export const Event = {
-  CONNECTED: "connected",
-  DISCONNECTED: "disconnected",
-} as const;
-
+/**
+ * @category Types
+ **/
 export type Configuration = {
   url: string;
   template?: {
@@ -14,4 +12,20 @@ export type Configuration = {
   events?: {};
 };
 
+/**
+ * @category Metadata
+ * @enum
+ */
+export const Event = {
+  CONNECTED: "connected",
+  DISCONNECTED: "disconnected",
+} as const;
+/**
+ * @category Metadata
+ */
+export type Event = (typeof Event)[keyof typeof Event];
+
+/**
+ * @category Types
+ **/
 export type Handler = (event: Event) => void;

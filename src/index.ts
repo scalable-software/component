@@ -6,7 +6,7 @@ export { Event } from "./component.meta.js";
 /**
  * @category Types
  **/
-export { type Configuration, type Handler } from "./component.meta.js";
+export { type Configuration } from "./component.meta.js";
 
 /**
  * @category Component

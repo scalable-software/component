@@ -25,7 +25,3 @@ export const Event = {
  */
 export type Event = (typeof Event)[keyof typeof Event];
 
-/**
- * @category Types
- **/
-export type Handler = (event: Event) => void;

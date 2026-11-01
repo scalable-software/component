@@ -140,6 +140,7 @@ export class Component extends HTMLElement {
    */
   disconnectedCallback() {
     this._removeEventListeners();
+    this._dispose();
     this._dispatchEvent(Event.DISCONNECTED);
   }
 
@@ -206,6 +207,8 @@ export class Component extends HTMLElement {
    * @hidden
    */
   protected _removeEventListeners = () => {};
+
+  protected _dispose = () => {};
 
   /**
    * Not required by all components.

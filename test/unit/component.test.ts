@@ -17,6 +17,7 @@ const Hook = {
   INITIALIZE: "_initialize",
   ADD_EVENT_LISTENERS: "_addEventListeners",
   REMOVE_EVENT_LISTENERS: "_removeEventListeners",
+  DISPOSE: "_dispose",
 } as const;
 
 /**
@@ -64,6 +65,7 @@ class Test extends Component {
   protected _removeEventListeners = jasmine.createSpy(
     Hook.REMOVE_EVENT_LISTENERS,
   );
+  protected _dispose = jasmine.createSpy(Hook.DISPOSE);
 }
 
 /**
@@ -303,6 +305,9 @@ given("Component is defined", () => {
           });
           then("component._removeEventListeners method was invoked", () => {
             expect(component[Hook.REMOVE_EVENT_LISTENERS]).toHaveBeenCalled();
+          });
+          then("component._dispose method was invoked", () => {
+            expect(component[Hook.DISPOSE]).toHaveBeenCalled();
           });
         });
       });

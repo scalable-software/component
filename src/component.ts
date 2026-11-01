@@ -166,6 +166,12 @@ export class Component extends HTMLElement {
     eventInitDict?: CustomEventInit<unknown>,
   ) => this.dispatchEvent(new CustomEvent(event, eventInitDict));
 
+  /**
+   * Dispatches a CustomEvent from the component with its detail
+   * @param event - The name of the event
+   * @param detail - The event's detail; without it, `event.detail` is `null`
+   * @hidden
+   */
   protected _dispatch = (event: string, detail?: unknown) =>
     this._dispatchEvent(event, detail === undefined ? undefined : { detail });
 
@@ -212,6 +218,12 @@ export class Component extends HTMLElement {
    */
   protected _removeEventListeners = () => {};
 
+  /**
+   * Not required by all components.
+   * Only needed if the component holds resources to end when it leaves the DOM.
+   * @category Hooks
+   * @hidden
+   */
   protected _dispose = () => {};
 
   /**

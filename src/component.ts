@@ -166,6 +166,10 @@ export class Component extends HTMLElement {
     eventInitDict?: CustomEventInit<unknown>,
   ) => this.dispatchEvent(new CustomEvent(event, eventInitDict));
 
+  protected _dispatch = (event: string, detail?: unknown) =>
+    this._dispatchEvent(event, detail === undefined ? undefined : { detail });
+
+
   /**
    * Not required by all components.
    * Only needed if the component has its own Layout.

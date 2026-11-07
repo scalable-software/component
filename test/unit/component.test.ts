@@ -20,6 +20,11 @@ const Hook = {
   DISPOSE: "_dispose",
 } as const;
 
+const Events = {
+  ON_SAVE: "onsave",
+  ON_CLOSE: "onclose",
+} as const;
+
 /**
  * Test Component with Attribute, State and Life-Cycle Hooks
  */
@@ -66,6 +71,28 @@ class Test extends Component {
     Hook.REMOVE_EVENT_LISTENERS,
   );
   protected _dispose = jasmine.createSpy(Hook.DISPOSE);
+
+  /**
+   * Component Events
+   */
+  public set onsave(handler: EventListener) {
+    this.addEventListener(Events.ON_SAVE, handler);
+  }
+
+  /** Test-only: true once the code after the last save's dispatch has run */
+  public saved = false;
+
+  /** Test-only: sends an event through _dispatch */
+  public save = (detail?: unknown) => {
+    this.saved = false;
+    const result = this._dispatch(Events.ON_SAVE, detail);
+    this.saved = true;
+    return result;
+  };
+
+  /** Test-only: sends an event through _dispatchEvent */
+  public send = (event: string, eventInitDict?: CustomEventInit<unknown>) =>
+    this._dispatchEvent(event, eventInitDict);
 }
 
 /**
@@ -344,6 +371,161 @@ given("Component is defined", () => {
           });
           then("component.state is State.UPDATE", () => {
             expect(component.state).toBe(State.UPDATE);
+          });
+        });
+      });
+    });
+  });
+});
+
+/**
+ * Component General Event Handler
+ */
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
+    beforeEach(() => {
+      define(Test.Tag, Test);
+    });
+    and("a new component instance is added to the DOM", () => {
+      let component: Test;
+      beforeEach(async () => {
+        component = add<Test>(Test.Tag);
+        await whenDefined(Test.Tag);
+      });
+      afterEach(() => {
+        component.remove();
+      });
+
+      then("component.onevent is null", () => {
+        expect(component.onevent).toBeNull();
+      });
+
+      and("component.onevent is set", () => {
+        let handler: jasmine.Spy;
+        beforeEach(() => {
+          handler = jasmine.createSpy("onevent");
+          component.onevent = handler;
+        });
+
+        then("reading component.onevent returns the same handler", () => {
+          expect(component.onevent).toBe(handler);
+        });
+
+        when("the component dispatches onsave with a detail", () => {
+          const detail = { node: { id: "1" } };
+          let listened: globalThis.Event | undefined;
+          beforeEach(() => {
+            component.addEventListener(
+              Events.ON_SAVE,
+              (event) => (listened = event),
+            );
+            component.save(detail);
+          });
+          then("onevent is called once with the dispatched event", () => {
+            expect(handler).toHaveBeenCalledOnceWith(listened);
+          });
+          then("the event's type is onsave and its detail is the detail", () => {
+            const [event] = handler.calls.mostRecent().args;
+            expect(event.type).toBe(Events.ON_SAVE);
+            expect(event.detail).toBe(detail);
+          });
+        });
+
+        when("the component dispatches through _dispatch and _dispatchEvent", () => {
+          beforeEach(() => {
+            component.save();
+            component.send(Events.ON_CLOSE);
+          });
+          then("onevent is called for each, in that order", () => {
+            const types = handler.calls.allArgs().map(([event]) => event.type);
+            expect(types).toEqual([Events.ON_SAVE, Events.ON_CLOSE]);
+          });
+        });
+
+        when("onevent is set to another handler", () => {
+          let other: jasmine.Spy;
+          beforeEach(() => {
+            other = jasmine.createSpy("other");
+            component.onevent = other;
+            component.save();
+          });
+          then("only the other handler is called", () => {
+            expect(handler).not.toHaveBeenCalled();
+            expect(other).toHaveBeenCalledTimes(1);
+          });
+        });
+
+        when("onevent is set to null", () => {
+          beforeEach(() => {
+            component.onevent = null;
+          });
+          then("reading component.onevent returns null", () => {
+            expect(component.onevent).toBeNull();
+          });
+          then("dispatching onsave calls no handler and nothing fails", () => {
+            expect(() => component.save()).not.toThrow();
+            expect(handler).not.toHaveBeenCalled();
+            expect(component.saved).toBeTrue();
+          });
+        });
+      });
+
+      and("an onsave handler, an onsave listener and onevent are set", () => {
+        let calls: string[];
+        beforeEach(() => {
+          calls = [];
+          component.onsave = () => calls.push("onsave");
+          component.addEventListener(Events.ON_SAVE, () =>
+            calls.push("listener"),
+          );
+          component.onevent = () => calls.push("onevent");
+        });
+        when("the component dispatches onsave", () => {
+          beforeEach(() => {
+            component.save();
+          });
+          then("the onsave handler and the listener run before onevent", () => {
+            expect(calls).toEqual(["onsave", "listener", "onevent"]);
+          });
+        });
+      });
+
+      and("component.onevent throws", () => {
+        const error = new Error("onevent failed");
+        let reportError: jasmine.Spy;
+        beforeEach(() => {
+          reportError = spyOn(window, "reportError");
+          component.onevent = () => {
+            throw error;
+          };
+        });
+        when("the component dispatches onsave", () => {
+          beforeEach(() => {
+            component.save();
+          });
+          then("the error is reported", () => {
+            expect(reportError).toHaveBeenCalledOnceWith(error);
+          });
+          then("the component's code after the dispatch still runs", () => {
+            expect(component.saved).toBeTrue();
+          });
+        });
+      });
+
+      and("a listener cancels a cancelable onsave", () => {
+        beforeEach(() => {
+          component.onevent = jasmine.createSpy("onevent");
+          component.addEventListener(Events.ON_SAVE, (event) =>
+            event.preventDefault(),
+          );
+        });
+        when("the component dispatches that event", () => {
+          let result: boolean;
+          beforeEach(() => {
+            result = component.send(Events.ON_SAVE, { cancelable: true });
+          });
+          then("_dispatchEvent returns false, as dispatchEvent does", () => {
+            expect(result).toBeFalse();
           });
         });
       });

@@ -93,6 +93,12 @@ export class Component extends HTMLElement {
   private _root: ShadowRoot | null = null;
 
   /**
+   * Stores the handler that receives every event the component dispatches
+   * @hidden
+   */
+  private _onevent: EventListener | null = null;
+
+  /**
    * @hidden
    */
   constructor(configuration?: Configuration) {
@@ -117,6 +123,21 @@ export class Component extends HTMLElement {
    */
   public get root(): ShadowRoot {
     return this._root as ShadowRoot;
+  }
+
+  /**
+   * One handler for every event the component dispatches through
+   * `_dispatch` or `_dispatchEvent`, e.g. `component.onevent = (event) => machine.send(event)`.
+   * It runs after the event's other handlers and listeners.
+   * Assigning replaces the handler; `null` removes it.
+   * @category Events
+   */
+  public get onevent(): EventListener | null {
+    return this._onevent;
+  }
+
+  public set onevent(handler: EventListener | null) {
+    this._onevent = handler;
   }
 
   /**
@@ -158,13 +179,32 @@ export class Component extends HTMLElement {
   }
 
   /**
-   * Dispatches a CustomEvent from the component
+   * Dispatches a CustomEvent from the component, then hands it to `onevent`.
+   * An error in `onevent` is reported, as for a listener, not thrown into the component.
+   * @returns what `dispatchEvent` returns: `false` when a listener cancelled the event
    * @hidden
    */
   protected _dispatchEvent = (
     event: string,
     eventInitDict?: CustomEventInit<unknown>,
-  ) => this.dispatchEvent(new CustomEvent(event, eventInitDict));
+  ): boolean => {
+    const custom = new CustomEvent(event, eventInitDict);
+    const result = this.dispatchEvent(custom);
+    this._notify(custom);
+    return result;
+  };
+
+  /**
+   * Hands an event to `onevent`, reporting an error instead of throwing it
+   * @hidden
+   */
+  private _notify = (event: CustomEvent) => {
+    try {
+      this._onevent?.(event);
+    } catch (error) {
+      reportError(error);
+    }
+  };
 
   /**
    * Dispatches a CustomEvent from the component with its detail

@@ -195,18 +195,6 @@ export class Component extends HTMLElement {
   };
 
   /**
-   * Hands an event to `onevent`, reporting an error instead of throwing it
-   * @hidden
-   */
-  private _notify = (event: CustomEvent) => {
-    try {
-      this._onevent?.(event);
-    } catch (error) {
-      reportError(error);
-    }
-  };
-
-  /**
    * Dispatches a CustomEvent from the component with its detail
    * @param event - The name of the event
    * @param detail - The event's detail; without it, `event.detail` is `null`
@@ -265,6 +253,18 @@ export class Component extends HTMLElement {
    * @hidden
    */
   protected _dispose = () => {};
+
+  /**
+   * Hands an event to `onevent`, reporting an error instead of throwing it
+   * @hidden
+   */
+  private _notify = (event: CustomEvent) => {
+    try {
+      this._onevent?.(event);
+    } catch (error) {
+      reportError(error);
+    }
+  };
 
   /**
    * Not required by all components.

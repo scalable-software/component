@@ -95,8 +95,12 @@ class Test extends Component {
   /**
    * Component Events
    */
-  public set onsave(handler: EventListener) {
-    this.addEventListener(Events.ON_SAVE, handler);
+  private _onsave: EventListener | null = null;
+  public get onsave(): EventListener | null {
+    return this._onsave;
+  }
+  public set onsave(handler: EventListener | null) {
+    this._onsave = this._subscribe(Events.ON_SAVE, this._onsave, handler);
   }
 
   /** Test-only: true once the code after the last save's dispatch has run */
@@ -671,6 +675,129 @@ given("Component is defined", () => {
             });
             then("the state attribute is removed", () => {
               expect(component.hasAttribute(Attribute.STATE)).toBeFalse();
+            });
+          });
+        });
+      });
+    });
+  });
+});
+
+/**
+ * Component Event Subscription
+ */
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
+    beforeEach(() => {
+      define(Test.Tag, Test);
+    });
+    and("a new component instance is added to the DOM", () => {
+      let component: Test;
+      beforeEach(async () => {
+        component = add<Test>(Test.Tag);
+        await whenDefined(Test.Tag);
+      });
+      afterEach(() => {
+        component.remove();
+      });
+
+      then("component.onsave is null", () => {
+        expect(component.onsave).toBeNull();
+      });
+
+      when("component.onsave is set to a function", () => {
+        let handler: jasmine.Spy;
+        beforeEach(() => {
+          handler = jasmine.createSpy("onsave");
+          component.onsave = handler;
+        });
+        then("reading component.onsave returns that function", () => {
+          expect(component.onsave).toBe(handler);
+        });
+        then("dispatching onsave calls it once", () => {
+          component.save();
+          expect(handler).toHaveBeenCalledTimes(1);
+        });
+
+        when("component.onsave is set to another function", () => {
+          let other: jasmine.Spy;
+          beforeEach(() => {
+            other = jasmine.createSpy("other");
+            component.onsave = other;
+            component.save();
+          });
+          then("dispatching onsave calls only the other function", () => {
+            expect(handler).not.toHaveBeenCalled();
+            expect(other).toHaveBeenCalledTimes(1);
+          });
+        });
+
+        when("component.onsave is set to null", () => {
+          beforeEach(() => {
+            component.onsave = null;
+            component.save();
+          });
+          then("reading component.onsave returns null", () => {
+            expect(component.onsave).toBeNull();
+          });
+          then("dispatching onsave calls no handler", () => {
+            expect(handler).not.toHaveBeenCalled();
+          });
+        });
+
+        when("component.onsave is set to undefined", () => {
+          beforeEach(() => {
+            component.onsave = undefined as any;
+            component.save();
+          });
+          then("reading component.onsave returns null", () => {
+            expect(component.onsave).toBeNull();
+          });
+          then("dispatching onsave calls no handler", () => {
+            expect(handler).not.toHaveBeenCalled();
+          });
+        });
+
+        when("component.onsave is set to the same function again", () => {
+          beforeEach(() => {
+            component.onsave = handler;
+            component.save();
+          });
+          then("dispatching onsave calls it once", () => {
+            expect(handler).toHaveBeenCalledTimes(1);
+          });
+        });
+
+        when("component.onsave is set to a value that is not a function", () => {
+          let assign: () => void;
+          beforeEach(() => {
+            assign = () => (component.onsave = "text" as any);
+          });
+          then("it throws Invalid onsave value: text", () => {
+            expect(assign).toThrowError("Invalid onsave value: text");
+          });
+          and("the value was rejected", () => {
+            beforeEach(() => {
+              expect(assign).toThrow();
+            });
+            then("reading component.onsave still returns the function", () => {
+              expect(component.onsave).toBe(handler);
+            });
+            then("dispatching onsave still calls the function", () => {
+              component.save();
+              expect(handler).toHaveBeenCalledTimes(1);
+            });
+            when("component.onsave is set to a function and then to null", () => {
+              let other: jasmine.Spy;
+              beforeEach(() => {
+                other = jasmine.createSpy("other");
+              });
+              then("both assignments succeed", () => {
+                expect(() => (component.onsave = other)).not.toThrow();
+                expect(component.onsave).toBe(other);
+                expect(() => (component.onsave = null)).not.toThrow();
+                expect(component.onsave).toBeNull();
+              });
             });
           });
         });

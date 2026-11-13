@@ -203,6 +203,20 @@ export class Component extends HTMLElement {
   protected _dispatch = (event: string, detail?: unknown) =>
     this._dispatchEvent(event, detail === undefined ? undefined : { detail });
 
+  /**
+   * Makes an attribute show a state, writing only when the attribute differs.
+   * Call it from a state setter, not from the constructor.
+   * @param name - The name of the attribute
+   * @param state - The current value of the state
+   * @param initial - For an optional attribute: the value shown by the attribute's absence.
+   * Leave it out for a compulsory attribute, which is always present.
+   * @hidden
+   */
+  protected _reflect = (name: string, state: string, initial?: string) =>
+    state === initial
+      ? this.removeAttribute(name)
+      : this.getAttribute(name) !== state && this.setAttribute(name, state);
+
 
   /**
    * Not required by all components.

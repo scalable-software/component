@@ -38,13 +38,19 @@ class Test extends Component {
     [Attribute.STATE]: (value: any) => (this.state = value),
   };
 
-  // State
+  // State: reflected to the optional `state` attribute
   private _state: string = State.DEFAULT;
-  public get state() {
+  public get state(): string {
     return this._state;
   }
-  public set state(value) {
-    this._state = value;
+  public set state(value: string | null) {
+    try {
+      value = value ?? State.DEFAULT;
+      if (this._state === value) return;
+      this._state = value;
+    } finally {
+      this._reflect(Attribute.STATE, this._state, State.DEFAULT);
+    }
   }
 
   // Events
@@ -74,6 +80,8 @@ const all = await Test.all(); // every <test-component>
 test.setAttribute("state", "update");
 test.state; // "update"
 
+test.state = "default"; // removes the state attribute
+
 test.onsave = (event) => console.log("saved", event.detail);
 test.save({ node: { id: "1" } }); // logs: saved { node: { id: "1" } }
 
@@ -96,6 +104,17 @@ Hooks are protected arrow-function properties. Override them as class fields.
 | Observed attribute changes | the matching handler in `_attributeHandlers` |
 
 `static get Attributes()` returns an object whose values become `observedAttributes`.
+
+### Attribute reflection
+
+`_reflect(name, state, initial?)` makes an attribute show a state. It writes only when the attribute differs, so a setter called from an attribute handler does not loop.
+
+| Kind of attribute | Call | The attribute |
+| --- | --- | --- |
+| Compulsory | `_reflect(name, state)` | always holds the state |
+| Optional | `_reflect(name, state, initial)` | holds the state, and is absent while the state is `initial` |
+
+Call it in a `finally` block of the state setter, as `Test.state` does above. It then also runs when validation throws or the value is unchanged, which puts back an attribute that was removed or set to an invalid value. Do not call it from the constructor: browsers do not allow a new element to add attributes there. Write a compulsory attribute's first value from `_initialize` instead.
 
 ### Events
 

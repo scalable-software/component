@@ -25,6 +25,16 @@ const Events = {
   ON_CLOSE: "onclose",
 } as const;
 
+/** Test-only: an attribute that is reflected but not observed */
+const Reflected = {
+  MODE: "mode",
+} as const;
+
+const Mode = {
+  ON: "on",
+  OFF: "off",
+} as const;
+
 /**
  * Test Component with Attribute, State and Life-Cycle Hooks
  */
@@ -53,13 +63,23 @@ class Test extends Component {
   /**
    * Component State
    */
-  private _state = State.DEFAULT;
-  public get state() {
+  private _state: string = State.DEFAULT;
+  public get state(): string {
     return this._state;
   }
-  public set state(value) {
-    this._state = value;
+  public set state(value: string | null) {
+    try {
+      value = value ?? State.DEFAULT;
+      if (this._state === value) return;
+      this._state = value;
+    } finally {
+      this._reflect(Attribute.STATE, this._state, State.DEFAULT);
+    }
   }
+
+  /** Test-only: makes an attribute show a state through _reflect */
+  public reflect = (name: string, state: string, initial?: string) =>
+    this._reflect(name, state, initial);
 
   /**
    * Component Life-Cycle Hooks
@@ -526,6 +546,132 @@ given("Component is defined", () => {
           });
           then("_dispatchEvent returns false, as dispatchEvent does", () => {
             expect(result).toBeFalse();
+          });
+        });
+      });
+    });
+  });
+});
+
+/**
+ * Component Attribute Reflection
+ */
+given("Component is defined", () => {
+  and("the Component is defined in the custom element registry", () => {
+    beforeEach(() => {
+      define(Test.Tag, Test);
+    });
+    and("a new component instance is added to the DOM", () => {
+      let component: Test;
+      beforeEach(async () => {
+        component = add<Test>(Test.Tag);
+        await whenDefined(Test.Tag);
+      });
+      afterEach(() => {
+        component.remove();
+      });
+
+      and("a compulsory attribute", () => {
+        when("the attribute is absent and a state is reflected", () => {
+          beforeEach(() => {
+            component.reflect(Reflected.MODE, Mode.ON);
+          });
+          then("the attribute's value is that state", () => {
+            expect(component.getAttribute(Reflected.MODE)).toBe(Mode.ON);
+          });
+        });
+        and("the attribute holds another value", () => {
+          beforeEach(() => {
+            component.setAttribute(Reflected.MODE, Mode.OFF);
+          });
+          when("a state is reflected", () => {
+            beforeEach(() => {
+              component.reflect(Reflected.MODE, Mode.ON);
+            });
+            then("the attribute's value is that state", () => {
+              expect(component.getAttribute(Reflected.MODE)).toBe(Mode.ON);
+            });
+          });
+        });
+        and("the attribute already holds the state", () => {
+          let setAttribute: jasmine.Spy;
+          let removeAttribute: jasmine.Spy;
+          beforeEach(() => {
+            component.setAttribute(Reflected.MODE, Mode.ON);
+            setAttribute = spyOn(component, "setAttribute").and.callThrough();
+            removeAttribute = spyOn(component, "removeAttribute").and.callThrough();
+          });
+          when("the same state is reflected", () => {
+            beforeEach(() => {
+              component.reflect(Reflected.MODE, Mode.ON);
+            });
+            then("the attribute is not written", () => {
+              expect(setAttribute).not.toHaveBeenCalled();
+              expect(removeAttribute).not.toHaveBeenCalled();
+              expect(component.getAttribute(Reflected.MODE)).toBe(Mode.ON);
+            });
+          });
+        });
+      });
+
+      and("an optional attribute whose initial value is off", () => {
+        when("the attribute is absent and a state other than off is reflected", () => {
+          beforeEach(() => {
+            component.reflect(Reflected.MODE, Mode.ON, Mode.OFF);
+          });
+          then("the attribute's value is that state", () => {
+            expect(component.getAttribute(Reflected.MODE)).toBe(Mode.ON);
+          });
+        });
+        when("the attribute is absent and off is reflected", () => {
+          then("the attribute stays absent, and nothing fails", () => {
+            expect(() =>
+              component.reflect(Reflected.MODE, Mode.OFF, Mode.OFF),
+            ).not.toThrow();
+            expect(component.hasAttribute(Reflected.MODE)).toBeFalse();
+          });
+        });
+        and("the attribute holds on", () => {
+          beforeEach(() => {
+            component.setAttribute(Reflected.MODE, Mode.ON);
+          });
+          when("off is reflected", () => {
+            beforeEach(() => {
+              component.reflect(Reflected.MODE, Mode.OFF, Mode.OFF);
+            });
+            then("the attribute is removed", () => {
+              expect(component.hasAttribute(Reflected.MODE)).toBeFalse();
+            });
+          });
+          when("on is reflected again", () => {
+            let setAttribute: jasmine.Spy;
+            beforeEach(() => {
+              setAttribute = spyOn(component, "setAttribute").and.callThrough();
+              component.reflect(Reflected.MODE, Mode.ON, Mode.OFF);
+            });
+            then("the attribute is not written", () => {
+              expect(setAttribute).not.toHaveBeenCalled();
+              expect(component.getAttribute(Reflected.MODE)).toBe(Mode.ON);
+            });
+          });
+        });
+      });
+
+      and("a state setter that reflects an optional attribute", () => {
+        when("component.state is set to State.UPDATE", () => {
+          beforeEach(() => {
+            component.state = State.UPDATE;
+          });
+          then("the state attribute is State.UPDATE", () => {
+            expect(component.getAttribute(Attribute.STATE)).toBe(State.UPDATE);
+          });
+          when("component.state is set back to State.DEFAULT", () => {
+            beforeEach(() => {
+              component.state = State.DEFAULT;
+            });
+            then("the state attribute is removed", () => {
+              expect(component.hasAttribute(Attribute.STATE)).toBeFalse();
+            });
           });
         });
       });

@@ -53,9 +53,13 @@ class Test extends Component {
     }
   }
 
-  // Events
-  public set onsave(handler: EventListener) {
-    this.addEventListener(Events.ON_SAVE, handler);
+  // Events: one `on…` property per event
+  private _onsave: EventListener | null = null;
+  public get onsave(): EventListener | null {
+    return this._onsave;
+  }
+  public set onsave(handler: EventListener | null) {
+    this._onsave = this._subscribe(Events.ON_SAVE, this._onsave, handler);
   }
 
   // Operations
@@ -84,6 +88,8 @@ test.state = "default"; // removes the state attribute
 
 test.onsave = (event) => console.log("saved", event.detail);
 test.save({ node: { id: "1" } }); // logs: saved { node: { id: "1" } }
+test.onsave = "text"; // throws: Invalid onsave value: text (the handler stays)
+test.onsave = null; // removes the handler
 
 // One handler for every event the component dispatches
 test.onevent = (event) => machine.send(event);
@@ -120,6 +126,7 @@ Call it in a `finally` block of the state setter, as `Test.state` does above. It
 
 - `_dispatch(event, detail?)`: dispatches a `CustomEvent` with that detail.
 - `_dispatchEvent(event, eventInitDict?)`: the same, for events that need options such as `cancelable`. It returns `false` when a listener cancelled the event.
+- `_subscribe(event, current, next)`: replaces the handler of an event, for the setter of an `on…` property, as `Test.onsave` does above. It checks `next` before anything changes: a function subscribes it, `null` or `undefined` removes the handler, and any other value throws `Invalid {event} value: {value}` and leaves the current handler in place. It returns the handler to store.
 - `onevent`: one `EventListener` that receives every event sent through either method, after the event's own handlers and listeners. An error it throws is reported with `reportError`, not thrown into the component. Assigning replaces it; `null` removes it.
 
 Events a component sends with `this.dispatchEvent(...)` directly do not reach `onevent`. A handler set after the component is in the DOM receives `disconnected` but has already missed `connected`.

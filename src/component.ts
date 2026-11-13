@@ -212,10 +212,10 @@ export class Component extends HTMLElement {
    * Leave it out for a compulsory attribute, which is always present.
    * @hidden
    */
-  protected _reflect = (name: string, state: string, initial?: string): void => {
-    if (state === initial) return this.removeAttribute(name);
-    this.getAttribute(name) !== state && this.setAttribute(name, state);
-  };
+  protected _reflect = (name: string, state: string, initial?: string) =>
+    state === initial
+      ? this.removeAttribute(name)
+      : this.getAttribute(name) !== state && this.setAttribute(name, state);
 
 
   /**

@@ -217,6 +217,31 @@ export class Component extends HTMLElement {
       ? this.removeAttribute(name)
       : this.getAttribute(name) !== state && this.setAttribute(name, state);
 
+  /**
+   * Replaces the handler of an event: removes the current one, then adds the next one.
+   * The next handler is checked before anything changes, so a rejected value leaves
+   * the current handler in place.
+   * Call it from the setter of an `on…` property and store what it returns.
+   * @param event - The name of the event
+   * @param current - The handler stored now, or `null`
+   * @param next - The handler to store: a function, or `null` or `undefined` to remove
+   * @returns the handler to store: the function, or `null`
+   * @throws when `next` is neither a function nor `null` or `undefined`
+   * @hidden
+   */
+  protected _subscribe = (
+    event: string,
+    current: EventListener | null,
+    next: unknown,
+  ): EventListener | null => {
+    next = next ?? null;
+    const valid = next === null || typeof next === "function";
+    if (!valid) throw new Error(`Invalid ${event} value: ${next}`);
+    current && this.removeEventListener(event, current);
+    next && this.addEventListener(event, next as EventListener);
+    return next as EventListener | null;
+  };
+
 
   /**
    * Not required by all components.
